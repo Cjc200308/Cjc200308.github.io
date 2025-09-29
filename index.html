@@ -48,6 +48,9 @@
                 30%, 50%, 70% { transform: translateX(-3px); }
                 40%, 60% { transform: translateX(3px); }
             }
+            .placeholder-hint::placeholder {
+                opacity: 0.7;
+            }
         }
     </style>
 </head>
@@ -118,9 +121,10 @@
                         <label for="characterLevel" class="block text-sm font-medium text-gray-700">人物等级</label>
                         <div class="relative">
                             <input type="number" id="characterLevel" name="characterLevel" 
-                                value="160" min="160" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                                data-base="160" data-increment="100">
+                                min="160" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                                data-base="160" data-increment="100"
+                                placeholder="请输入人物等级">
                             <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <i class="fa fa-level-up"></i>
                             </div>
@@ -148,58 +152,66 @@
                     <div class="space-y-2">
                         <label for="skill1" class="block text-sm font-medium text-gray-700">技能 1</label>
                         <input type="number" id="skill1" name="skill1" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill2" class="block text-sm font-medium text-gray-700">技能 2</label>
                         <input type="number" id="skill2" name="skill2" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill3" class="block text-sm font-medium text-gray-700">技能 3</label>
                         <input type="number" id="skill3" name="skill3" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill4" class="block text-sm font-medium text-gray-700">技能 4</label>
                         <input type="number" id="skill4" name="skill4" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill5" class="block text-sm font-medium text-gray-700">技能 5</label>
                         <input type="number" id="skill5" name="skill5" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill6" class="block text-sm font-medium text-gray-700">技能 6</label>
                         <input type="number" id="skill6" name="skill6" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill7" class="block text-sm font-medium text-gray-700">技能 7</label>
                         <input type="number" id="skill7" name="skill7" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                     <div class="space-y-2">
                         <label for="skill8" class="block text-sm font-medium text-gray-700">技能 8</label>
                         <input type="number" id="skill8" name="skill8" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="5">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="5"
+                            placeholder="请输入技能等级">
                     </div>
                 </div>
                 <div class="mt-4 flex justify-end">
@@ -222,37 +234,42 @@
                     <div class="space-y-2">
                         <label for="weapon" class="block text-sm font-medium text-gray-700">武器</label>
                         <input type="number" id="weapon" name="weapon" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="14">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="14"
+                            placeholder="请输入装备等级">
                     </div>
                     <div class="space-y-2">
                         <label for="secondaryWeapon" class="block text-sm font-medium text-gray-700">副武器</label>
                         <input type="number" id="secondaryWeapon" name="secondaryWeapon" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="14">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="14"
+                            placeholder="请输入装备等级">
                     </div>
                     <div class="space-y-2">
                         <label for="head" class="block text-sm font-medium text-gray-700">头部</label>
                         <input type="number" id="head" name="head" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="14">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="14"
+                            placeholder="请输入装备等级">
                     </div>
                     <div class="space-y-2">
                         <label for="armor" class="block text-sm font-medium text-gray-700">铠甲</label>
                         <input type="number" id="armor" name="armor" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="14">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="14"
+                            placeholder="请输入装备等级">
                     </div>
                     <div class="space-y-2">
                         <label for="shoes" class="block text-sm font-medium text-gray-700">鞋子</label>
                         <input type="number" id="shoes" name="shoes" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="14">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="14"
+                            placeholder="请输入装备等级">
                     </div>
                 </div>
                 <div class="mt-4 flex justify-end">
@@ -275,17 +292,19 @@
                     <div class="space-y-2">
                         <label for="mainPet" class="block text-sm font-medium text-gray-700">主宠</label>
                         <input type="number" id="mainPet" name="mainPet" 
-                            value="160" min="160" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                            data-base="160" data-increment="6">
+                            min="160" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                            data-base="160" data-increment="6"
+                            placeholder="请输入幻兽等级">
                     </div>
                     <div class="space-y-2">
                         <label for="pet1" class="block text-sm font-medium text-gray-700">副宠 1</label>
                         <div class="relative">
                             <input type="number" id="pet1" name="pet1" 
-                                value="160" min="160" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                                data-base="160" data-increment="6" data-pet-type="secondary">
+                                min="160" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                                data-base="160" data-increment="6" data-pet-type="secondary"
+                                placeholder="请输入幻兽等级">
                             <div class="hidden absolute -bottom-6 left-0 text-xs text-danger pet-error">
                                 <i class="fa fa-exclamation-circle mr-1"></i>副宠等级不能超过主宠
                             </div>
@@ -295,9 +314,10 @@
                         <label for="pet2" class="block text-sm font-medium text-gray-700">副宠 2</label>
                         <div class="relative">
                             <input type="number" id="pet2" name="pet2" 
-                                value="160" min="160" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                                data-base="160" data-increment="6" data-pet-type="secondary">
+                                min="160" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                                data-base="160" data-increment="6" data-pet-type="secondary"
+                                placeholder="请输入幻兽等级">
                             <div class="hidden absolute -bottom-6 left-0 text-xs text-danger pet-error">
                                 <i class="fa fa-exclamation-circle mr-1"></i>副宠等级不能超过主宠
                             </div>
@@ -307,9 +327,10 @@
                         <label for="pet3" class="block text-sm font-medium text-gray-700">副宠 3</label>
                         <div class="relative">
                             <input type="number" id="pet3" name="pet3" 
-                                value="160" min="160" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                                data-base="160" data-increment="6" data-pet-type="secondary">
+                                min="160" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                                data-base="160" data-increment="6" data-pet-type="secondary"
+                                placeholder="请输入幻兽等级">
                             <div class="hidden absolute -bottom-6 left-0 text-xs text-danger pet-error">
                                 <i class="fa fa-exclamation-circle mr-1"></i>副宠等级不能超过主宠
                             </div>
@@ -337,9 +358,10 @@
                         <label for="relicResonance" class="block text-sm font-medium text-gray-700">共鸣等级</label>
                         <div class="relative">
                             <input type="number" id="relicResonance" name="relicResonance" 
-                                value="16" min="16" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                                data-base="16" data-increment="520">
+                                min="16" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                                data-base="16" data-increment="520"
+                                placeholder="请输入共鸣等级">
                             <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <i class="fa fa-sync"></i>
                             </div>
@@ -350,8 +372,9 @@
                         <div class="relative">
                             <input type="number" id="relicExcess" name="relicExcess" 
                                 value="0" min="0" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
-                                data-base="0" data-increment="26">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
+                                data-base="0" data-increment="26"
+                                placeholder="请输入遗物数量">
                             <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <i class="fa fa-plus-circle"></i>
                             </div>
@@ -376,20 +399,27 @@
     </main>
 
     <script>
-        // 移动端菜单切换
-        document.getElementById('menuToggle').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('hidden');
+        // 页面加载时初始化所有输入框
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有需要隐藏初始值的输入框设置空值
+            const inputsToClear = document.querySelectorAll('input[min="160"], input[min="16"]');
+            inputsToClear.forEach(input => {
+                input.value = '';
+            });
+            
+            // 初始化计算
+            calculateAllScores();
         });
 
         // 副宠等级验证函数
         function validatePetLevels() {
-            const mainPetLevel = parseInt(document.getElementById('mainPet').value) || 0;
+            const mainPetInput = document.getElementById('mainPet');
+            const mainPetLevel = parseInt(mainPetInput.value) || parseInt(mainPetInput.min);
             const secondaryPets = document.querySelectorAll('input[data-pet-type="secondary"]');
             let isValid = true;
             
             secondaryPets.forEach(pet => {
-                const petLevel = parseInt(pet.value) || 0;
+                const petLevel = parseInt(pet.value) || parseInt(pet.min);
                 const errorElement = pet.nextElementSibling;
                 
                 // 隐藏之前的错误提示
@@ -414,7 +444,7 @@
 
         // 计算单个项目的评分
         function calculateItemScore(input) {
-            const level = parseInt(input.value) || 0;
+            const level = parseInt(input.value) || parseInt(input.min) || 0;
             const baseLevel = parseInt(input.dataset.base) || 0;
             const increment = parseInt(input.dataset.increment) || 0;
             
@@ -496,9 +526,6 @@
                 resultElement.classList.remove('scale-110', 'text-accent');
             }, 300);
         }
-
-        // 页面加载时计算一次
-        document.addEventListener('DOMContentLoaded', calculateAllScores);
         
         // 为所有输入框添加输入事件监听，实现实时自动计算
         document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -506,7 +533,8 @@
             // 添加失去焦点事件，确保数值不低于最小值
             input.addEventListener('blur', function() {
                 const min = parseInt(this.min) || 0;
-                if (parseInt(this.value) < min) {
+                // 如果输入为空或小于最小值，设置为最小值
+                if (!this.value || parseInt(this.value) < min) {
                     this.value = min;
                     calculateAllScores();
                 }
@@ -515,11 +543,11 @@
         
         // 为主宠等级添加额外监听，当主宠等级变化时验证副宠
         document.getElementById('mainPet').addEventListener('input', function() {
-            const mainPetLevel = parseInt(this.value) || 0;
+            const mainPetLevel = parseInt(this.value) || parseInt(this.min);
             const secondaryPets = document.querySelectorAll('input[data-pet-type="secondary"]');
             
             secondaryPets.forEach(pet => {
-                const petLevel = parseInt(pet.value) || 0;
+                const petLevel = parseInt(pet.value) || parseInt(pet.min);
                 if (petLevel > mainPetLevel) {
                     pet.value = mainPetLevel;
                 }
@@ -530,15 +558,19 @@
         // 重置按钮点击事件后重新计算
         document.getElementById('resetBtn').addEventListener('click', function() {
             setTimeout(() => {
-                // 重置后确保副宠等级不超过主宠
-                const mainPetLevel = parseInt(document.getElementById('mainPet').value) || 0;
+                // 重置后清空输入框并确保不低于最小值
+                const inputsToClear = document.querySelectorAll('input[min="160"], input[min="16"]');
+                inputsToClear.forEach(input => {
+                    input.value = '';
+                });
+                
+                // 确保副宠等级不超过主宠
+                const mainPetInput = document.getElementById('mainPet');
+                const mainPetLevel = parseInt(mainPetInput.min);
                 const secondaryPets = document.querySelectorAll('input[data-pet-type="secondary"]');
                 
                 secondaryPets.forEach(pet => {
-                    const petLevel = parseInt(pet.value) || 0;
-                    if (petLevel > mainPetLevel) {
-                        pet.value = mainPetLevel;
-                    }
+                    pet.value = '';
                     // 清除错误状态
                     pet.classList.remove('border-danger');
                     const errorElement = pet.nextElementSibling;

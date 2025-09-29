@@ -67,11 +67,9 @@
             <div class="grid md:grid-cols-2 gap-4 mt-4 text-sm text-white/80">
                 <div>
                     <p>本赛季原初之星: <span id="currentSeasonStars" class="font-medium">65</span> 个</p>
-                    <p class="mt-1">计算公式: 65 + 总养成评分 / 13（结果向下取整）</p>
                 </div>
                 <div>
                     <p>上赛季原初之星: <span id="lastSeasonStarsDisplay" class="font-medium">0</span> 个</p>
-                    <p class="mt-1">当前总养成评分: <span id="totalScore" class="font-medium">0</span></p>
                 </div>
             </div>
         </div>
@@ -95,12 +93,6 @@
                         <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                             <i class="fa fa-star"></i>
                         </div>
-                    </div>
-                </div>
-                <div class="flex items-end">
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-full">
-                        <p class="text-sm text-gray-500">累计贡献</p>
-                        <p id="lastSeasonContribution" class="text-lg font-semibold text-primary">0</p>
                     </div>
                 </div>
             </div>
@@ -128,12 +120,6 @@
                             <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <i class="fa fa-level-up"></i>
                             </div>
-                        </div>
-                    </div>
-                    <div class="flex items-end">
-                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-full">
-                            <p class="text-sm text-gray-500">评分贡献</p>
-                            <p id="characterScore" class="text-lg font-semibold text-primary">0</p>
                         </div>
                     </div>
                 </div>
@@ -214,12 +200,6 @@
                             placeholder="请输入技能等级">
                     </div>
                 </div>
-                <div class="mt-4 flex justify-end">
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
-                        <p class="text-sm text-gray-500">总技能评分</p>
-                        <p id="skillsTotalScore" class="text-lg font-semibold text-primary">0</p>
-                    </div>
-                </div>
             </section>
 
             <!-- 装备等级 -->
@@ -270,12 +250,6 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all placeholder-hint"
                             data-base="160" data-increment="14"
                             placeholder="请输入装备等级">
-                    </div>
-                </div>
-                <div class="mt-4 flex justify-end">
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
-                        <p class="text-sm text-gray-500">总装备评分</p>
-                        <p id="equipmentTotalScore" class="text-lg font-semibold text-primary">0</p>
                     </div>
                 </div>
             </section>
@@ -337,12 +311,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-4 flex justify-end">
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
-                        <p class="text-sm text-gray-500">总幻兽评分</p>
-                        <p id="petsTotalScore" class="text-lg font-semibold text-primary">0</p>
-                    </div>
-                </div>
             </section>
 
             <!-- 遗物等级 -->
@@ -379,12 +347,6 @@
                                 <i class="fa fa-plus-circle"></i>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="mt-4 flex justify-end">
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
-                        <p class="text-sm text-gray-500">总遗物评分</p>
-                        <p id="relicsTotalScore" class="text-lg font-semibold text-primary">0</p>
                     </div>
                 </div>
             </section>
@@ -468,12 +430,10 @@
             // 获取上赛季原初之星数量
             const lastSeasonStars = parseInt(document.getElementById('lastSeasonStars').value) || 0;
             document.getElementById('lastSeasonStarsDisplay').textContent = lastSeasonStars;
-            document.getElementById('lastSeasonContribution').textContent = lastSeasonStars;
             
             // 人物评分
             const characterInput = document.getElementById('characterLevel');
             const characterScore = calculateItemScore(characterInput);
-            document.getElementById('characterScore').textContent = characterScore;
             
             // 技能评分
             let skillsTotal = 0;
@@ -481,7 +441,6 @@
                 const skillInput = document.getElementById(`skill${i}`);
                 skillsTotal += calculateItemScore(skillInput);
             }
-            document.getElementById('skillsTotalScore').textContent = skillsTotal;
             
             // 装备评分
             const equipmentInputs = ['weapon', 'secondaryWeapon', 'head', 'armor', 'shoes'];
@@ -490,7 +449,6 @@
                 const input = document.getElementById(id);
                 equipmentTotal += calculateItemScore(input);
             });
-            document.getElementById('equipmentTotalScore').textContent = equipmentTotal;
             
             // 幻兽评分
             const petInputs = ['mainPet', 'pet1', 'pet2', 'pet3'];
@@ -499,7 +457,6 @@
                 const input = document.getElementById(id);
                 petsTotal += calculateItemScore(input);
             });
-            document.getElementById('petsTotalScore').textContent = petsTotal;
             
             // 遗物评分
             const resonanceInput = document.getElementById('relicResonance');
@@ -507,15 +464,13 @@
             const resonanceScore = calculateItemScore(resonanceInput);
             const excessScore = calculateItemScore(excessInput);
             const relicsTotal = resonanceScore + excessScore;
-            document.getElementById('relicsTotalScore').textContent = relicsTotal;
             
             // 总评分和结果计算（使用Math.floor进行向下取整）
             const totalScore = characterScore + skillsTotal + equipmentTotal + petsTotal + relicsTotal;
             const currentSeasonStars = Math.floor(65 + totalScore / 13);
             const totalStars = currentSeasonStars + lastSeasonStars;
             
-            // 更新显示，现在结果是整数
-            document.getElementById('totalScore').textContent = totalScore;
+            // 更新显示
             document.getElementById('currentSeasonStars').textContent = currentSeasonStars;
             document.getElementById('totalStarsValue').textContent = totalStars;
             

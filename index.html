@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原初之星计算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // 主色调：深紫色
+                        secondary: '#10B981', // 辅助色：绿色
+                        accent: '#F59E0B', // 强调色：橙色
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        danger: '#EF4444' // 错误提示色：红色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+            }
+            .section-transition {
+                transition: all 0.3s ease;
+            }
+            .error-shake {
+                animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            }
+            @keyframes shake {
+                10%, 90% { transform: translateX(-1px); }
+                20%, 80% { transform: translateX(2px); }
+                30%, 50%, 70% { transform: translateX(-3px); }
+                40%, 60% { transform: translateX(3px); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-dark">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-star text-accent text-2xl"></i>
+                <h1 class="text-xl md:text-2xl font-bold text-primary">原初之星计算器</h1>
+            </div>
+            <button class="md:hidden text-gray-600" id="menuToggle">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- 结果展示区 -->
+        <div class="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-6 md:p-8 mb-8 text-white shadow-lg">
+            <h2 class="text-xl md:text-2xl font-semibold mb-2">总原初之星数量</h2>
+            <div class="flex items-end">
+                <span id="totalStarsValue" class="text-4xl md:text-5xl font-bold mr-3">65</span>
+                <span class="text-white/80 mb-1">个</span>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4 mt-4 text-sm text-white/80">
+                <div>
+                    <p>本赛季原初之星: <span id="currentSeasonStars" class="font-medium">65</span> 个</p>
+                    <p class="mt-1">计算公式: 65 + 总养成评分 / 13</p>
+                </div>
+                <div>
+                    <p>上赛季原初之星: <span id="lastSeasonStarsDisplay" class="font-medium">0</span> 个</p>
+                    <p class="mt-1">当前总养成评分: <span id="totalScore" class="font-medium">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 上赛季数据输入区 -->
+        <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg mb-8">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-history text-primary"></i>
+                </div>
+                <h2 class="text-xl font-bold">上赛季数据</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label for="lastSeasonStars" class="block text-sm font-medium text-gray-700">上赛季获得的原初之星数量</label>
+                    <div class="relative">
+                        <input type="number" id="lastSeasonStars" name="lastSeasonStars" 
+                            value="0" min="0" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            placeholder="请输入上赛季获得的原初之星数量">
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <i class="fa fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-end">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-full">
+                        <p class="text-sm text-gray-500">累计贡献</p>
+                        <p id="lastSeasonContribution" class="text-lg font-semibold text-primary">0</p>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-3 text-sm text-gray-500">
+                <i class="fa fa-info-circle mr-1"></i>输入上赛季获得的原初之星数量，系统将自动计算总累计数量
+            </p>
+        </section>
+
+        <!-- 计算器表单 -->
+        <form id="calculatorForm" class="space-y-8">
+            <!-- 人物等级 -->
+            <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-user text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">人物等级</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="characterLevel" class="block text-sm font-medium text-gray-700">人物等级</label>
+                        <div class="relative">
+                            <input type="number" id="characterLevel" name="characterLevel" 
+                                value="160" min="1" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                                data-base="160" data-increment="100">
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                <i class="fa fa-level-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-full">
+                            <p class="text-sm text-gray-500">评分贡献</p>
+                            <p id="characterScore" class="text-lg font-semibold text-primary">0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技能等级 -->
+            <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-magic text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">技能等级</h2>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- 技能1-8 -->
+                    <div class="space-y-2">
+                        <label for="skill1" class="block text-sm font-medium text-gray-700">技能 1</label>
+                        <input type="number" id="skill1" name="skill1" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill2" class="block text-sm font-medium text-gray-700">技能 2</label>
+                        <input type="number" id="skill2" name="skill2" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill3" class="block text-sm font-medium text-gray-700">技能 3</label>
+                        <input type="number" id="skill3" name="skill3" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill4" class="block text-sm font-medium text-gray-700">技能 4</label>
+                        <input type="number" id="skill4" name="skill4" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill5" class="block text-sm font-medium text-gray-700">技能 5</label>
+                        <input type="number" id="skill5" name="skill5" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill6" class="block text-sm font-medium text-gray-700">技能 6</label>
+                        <input type="number" id="skill6" name="skill6" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill7" class="block text-sm font-medium text-gray-700">技能 7</label>
+                        <input type="number" id="skill7" name="skill7" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="skill8" class="block text-sm font-medium text-gray-700">技能 8</label>
+                        <input type="number" id="skill8" name="skill8" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="5">
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
+                        <p class="text-sm text-gray-500">总技能评分</p>
+                        <p id="skillsTotalScore" class="text-lg font-semibold text-primary">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 装备等级 -->
+            <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-shield text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">装备等级</h2>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <label for="weapon" class="block text-sm font-medium text-gray-700">武器</label>
+                        <input type="number" id="weapon" name="weapon" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="14">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="secondaryWeapon" class="block text-sm font-medium text-gray-700">副武器</label>
+                        <input type="number" id="secondaryWeapon" name="secondaryWeapon" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="14">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="head" class="block text-sm font-medium text-gray-700">头部</label>
+                        <input type="number" id="head" name="head" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="14">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="armor" class="block text-sm font-medium text-gray-700">铠甲</label>
+                        <input type="number" id="armor" name="armor" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="14">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="shoes" class="block text-sm font-medium text-gray-700">鞋子</label>
+                        <input type="number" id="shoes" name="shoes" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="14">
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
+                        <p class="text-sm text-gray-500">总装备评分</p>
+                        <p id="equipmentTotalScore" class="text-lg font-semibold text-primary">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 幻兽等级 -->
+            <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-paw text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">幻兽等级</h2>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="space-y-2">
+                        <label for="mainPet" class="block text-sm font-medium text-gray-700">主宠</label>
+                        <input type="number" id="mainPet" name="mainPet" 
+                            value="160" min="1" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                            data-base="160" data-increment="6">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="pet1" class="block text-sm font-medium text-gray-700">副宠 1</label>
+                        <div class="relative">
+                            <input type="number" id="pet1" name="pet1" 
+                                value="160" min="1" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                                data-base="160" data-increment="6" data-pet-type="secondary">
+                            <div class="hidden absolute -bottom-6 left-0 text-xs text-danger pet-error">
+                                <i class="fa fa-exclamation-circle mr-1"></i>副宠等级不能超过主宠
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="pet2" class="block text-sm font-medium text-gray-700">副宠 2</label>
+                        <div class="relative">
+                            <input type="number" id="pet2" name="pet2" 
+                                value="160" min="1" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                                data-base="160" data-increment="6" data-pet-type="secondary">
+                            <div class="hidden absolute -bottom-6 left-0 text-xs text-danger pet-error">
+                                <i class="fa fa-exclamation-circle mr-1"></i>副宠等级不能超过主宠
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="pet3" class="block text-sm font-medium text-gray-700">副宠 3</label>
+                        <div class="relative">
+                            <input type="number" id="pet3" name="pet3" 
+                                value="160" min="1" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                                data-base="160" data-increment="6" data-pet-type="secondary">
+                            <div class="hidden absolute -bottom-6 left-0 text-xs text-danger pet-error">
+                                <i class="fa fa-exclamation-circle mr-1"></i>副宠等级不能超过主宠
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
+                        <p class="text-sm text-gray-500">总幻兽评分</p>
+                        <p id="petsTotalScore" class="text-lg font-semibold text-primary">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 遗物等级 -->
+            <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-diamond text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">遗物等级</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="relicResonance" class="block text-sm font-medium text-gray-700">共鸣等级</label>
+                        <div class="relative">
+                            <input type="number" id="relicResonance" name="relicResonance" 
+                                value="16" min="1" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                                data-base="16" data-increment="520">
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                <i class="fa fa-sync"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="relicExcess" class="block text-sm font-medium text-gray-700">超出共鸣等级的遗物数量</label>
+                        <div class="relative">
+                            <input type="number" id="relicExcess" name="relicExcess" 
+                                value="0" min="0" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus transition-all"
+                                data-base="0" data-increment="26">
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                <i class="fa fa-plus-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 w-48">
+                        <p class="text-sm text-gray-500">总遗物评分</p>
+                        <p id="relicsTotalScore" class="text-lg font-semibold text-primary">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 操作按钮 -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                <button type="button" id="calculateBtn" class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-lg transition-all shadow-md hover:shadow-lg flex-1 sm:flex-none">
+                    <i class="fa fa-calculator mr-2"></i>计算
+                </button>
+                <button type="reset" id="resetBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-8 rounded-lg transition-all">
+                    <i class="fa fa-refresh mr-2"></i>重置
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-dark text-white/80 mt-16 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa fa-star text-accent"></i>
+                        <span class="font-bold">原初之星计算器</span>
+                    </div>
+                    <p class="text-sm mt-2">便捷计算您的赛季原初之星数量</p>
+                </div>
+            </div>
+            <div class="border-t border-white/10 mt-6 pt-6 text-center text-sm">
+                <p>© 2025 原初之星计算器 | 设计与开发</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 副宠等级验证函数
+        function validatePetLevels() {
+            const mainPetLevel = parseInt(document.getElementById('mainPet').value) || 0;
+            const secondaryPets = document.querySelectorAll('input[data-pet-type="secondary"]');
+            let isValid = true;
+            
+            secondaryPets.forEach(pet => {
+                const petLevel = parseInt(pet.value) || 0;
+                const errorElement = pet.nextElementSibling;
+                
+                // 隐藏之前的错误提示
+                errorElement.classList.add('hidden');
+                pet.classList.remove('border-danger', 'error-shake');
+                
+                // 验证等级
+                if (petLevel > mainPetLevel) {
+                    isValid = false;
+                    // 显示错误提示
+                    errorElement.classList.remove('hidden');
+                    pet.classList.add('border-danger', 'error-shake');
+                    // 自动调整为与主宠相同等级
+                    setTimeout(() => {
+                        pet.value = mainPetLevel;
+                    }, 500);
+                }
+            });
+            
+            return isValid;
+        }
+
+        // 计算单个项目的评分
+        function calculateItemScore(input) {
+            const level = parseInt(input.value) || 0;
+            const baseLevel = parseInt(input.dataset.base) || 0;
+            const increment = parseInt(input.dataset.increment) || 0;
+            
+            // 等级不低于基础等级时才计算加分
+            if (level >= baseLevel) {
+                return (level - baseLevel) * increment;
+            }
+            return 0;
+        }
+
+        // 计算所有评分并更新结果
+        function calculateAllScores() {
+            // 先验证副宠等级
+            const isPetLevelsValid = validatePetLevels();
+            if (!isPetLevelsValid) {
+                // 如果副宠等级无效，短暂延迟后重新计算
+                setTimeout(calculateAllScores, 600);
+                return;
+            }
+            
+            // 获取上赛季原初之星数量
+            const lastSeasonStars = parseInt(document.getElementById('lastSeasonStars').value) || 0;
+            document.getElementById('lastSeasonStarsDisplay').textContent = lastSeasonStars;
+            document.getElementById('lastSeasonContribution').textContent = lastSeasonStars;
+            
+            // 人物评分
+            const characterInput = document.getElementById('characterLevel');
+            const characterScore = calculateItemScore(characterInput);
+            document.getElementById('characterScore').textContent = characterScore;
+            
+            // 技能评分
+            let skillsTotal = 0;
+            for (let i = 1; i <= 8; i++) {
+                const skillInput = document.getElementById(`skill${i}`);
+                skillsTotal += calculateItemScore(skillInput);
+            }
+            document.getElementById('skillsTotalScore').textContent = skillsTotal;
+            
+            // 装备评分
+            const equipmentInputs = ['weapon', 'secondaryWeapon', 'head', 'armor', 'shoes'];
+            let equipmentTotal = 0;
+            equipmentInputs.forEach(id => {
+                const input = document.getElementById(id);
+                equipmentTotal += calculateItemScore(input);
+            });
+            document.getElementById('equipmentTotalScore').textContent = equipmentTotal;
+            
+            // 幻兽评分
+            const petInputs = ['mainPet', 'pet1', 'pet2', 'pet3'];
+            let petsTotal = 0;
+            petInputs.forEach(id => {
+                const input = document.getElementById(id);
+                petsTotal += calculateItemScore(input);
+            });
+            document.getElementById('petsTotalScore').textContent = petsTotal;
+            
+            // 遗物评分
+            const resonanceInput = document.getElementById('relicResonance');
+            const excessInput = document.getElementById('relicExcess');
+            const resonanceScore = calculateItemScore(resonanceInput);
+            const excessScore = calculateItemScore(excessInput);
+            const relicsTotal = resonanceScore + excessScore;
+            document.getElementById('relicsTotalScore').textContent = relicsTotal;
+            
+            // 总评分和结果计算
+            const totalScore = characterScore + skillsTotal + equipmentTotal + petsTotal + relicsTotal;
+            const currentSeasonStars = 65 + totalScore / 13;
+            const totalStars = currentSeasonStars + lastSeasonStars;
+            
+            // 更新显示，保留一位小数
+            document.getElementById('totalScore').textContent = totalScore;
+            document.getElementById('currentSeasonStars').textContent = currentSeasonStars.toFixed(1);
+            document.getElementById('totalStarsValue').textContent = totalStars.toFixed(1);
+            
+            // 添加结果更新动画
+            const resultElement = document.getElementById('totalStarsValue');
+            resultElement.classList.add('scale-110', 'text-accent');
+            setTimeout(() => {
+                resultElement.classList.remove('scale-110', 'text-accent');
+            }, 300);
+        }
+
+        // 页面加载时计算一次
+        document.addEventListener('DOMContentLoaded', calculateAllScores);
+        
+        // 为所有输入框添加输入事件监听
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', calculateAllScores);
+        });
+        
+        // 为主宠等级添加额外监听，当主宠等级变化时验证副宠
+        document.getElementById('mainPet').addEventListener('input', function() {
+            const mainPetLevel = parseInt(this.value) || 0;
+            const secondaryPets = document.querySelectorAll('input[data-pet-type="secondary"]');
+            
+            secondaryPets.forEach(pet => {
+                const petLevel = parseInt(pet.value) || 0;
+                if (petLevel > mainPetLevel) {
+                    pet.value = mainPetLevel;
+                }
+            });
+            calculateAllScores();
+        });
+        
+        // 计算按钮点击事件
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            calculateAllScores();
+            
+            // 按钮点击动画
+            this.classList.add('scale-95');
+            setTimeout(() => {
+                this.classList.remove('scale-95');
+            }, 200);
+        });
+        
+        // 重置按钮点击事件后重新计算
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            setTimeout(() => {
+                // 重置后确保副宠等级不超过主宠
+                const mainPetLevel = parseInt(document.getElementById('mainPet').value) || 0;
+                const secondaryPets = document.querySelectorAll('input[data-pet-type="secondary"]');
+                
+                secondaryPets.forEach(pet => {
+                    const petLevel = parseInt(pet.value) || 0;
+                    if (petLevel > mainPetLevel) {
+                        pet.value = mainPetLevel;
+                    }
+                    // 清除错误状态
+                    pet.classList.remove('border-danger');
+                    const errorElement = pet.nextElementSibling;
+                    errorElement.classList.add('hidden');
+                });
+                
+                calculateAllScores();
+            }, 100);
+            
+            // 按钮点击动画
+            this.classList.add('scale-95');
+            setTimeout(() => {
+                this.classList.remove('scale-95');
+            }, 200);
+        });
+    </script>
+</body>
+</html>
+    

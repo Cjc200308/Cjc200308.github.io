@@ -548,6 +548,7 @@
         }
 
         // 更新奖励展示 - 未解锁任何奖励时只显示接下来要解锁的10个奖励
+        // 已解锁部分奖励时，显示最近解锁的5个和即将解锁的20个奖励
         function updateRewardDisplay(totalStars) {
             const rewardsContainer = document.getElementById('rewardsContainer');
             rewardsContainer.innerHTML = '';
@@ -591,17 +592,17 @@
                 const initialRewards = starRewards.slice(startIndex, startIndex + 10);
                 displayRewards.push(...initialRewards);
             } else {
-                // 已经解锁了部分奖励的情况：显示最近解锁的5个和接下来的5个
+                // 已经解锁了部分奖励的情况：显示最近解锁的5个和接下来的20个
                 if (unlockedRewards.length > 0) {
                     // 从解锁的奖励中取最近的5个
                     const recentUnlocked = unlockedRewards.slice(-5);
                     displayRewards.push(...recentUnlocked);
                 }
                 
-                // 添加接下来的5个待解锁奖励
+                // 添加接下来的20个待解锁奖励
                 if (nextReward) {
                     const nextRewardsIndex = starRewards.indexOf(nextReward);
-                    const upcomingRewards = starRewards.slice(nextRewardsIndex, nextRewardsIndex + 5);
+                    const upcomingRewards = starRewards.slice(nextRewardsIndex, nextRewardsIndex + 20);
                     
                     // 避免重复添加
                     upcomingRewards.forEach(reward => {

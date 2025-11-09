@@ -92,7 +92,7 @@
                 <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mr-3">
                     <i class="fa fa-trophy text-accent"></i>
                 </div>
-                <h2 class="text-xl font-bold">已解锁的属性奖励</h2>
+                <h2 class="text-xl font-bold">属性奖励</h2>
             </div>
             
             <div class="mb-4">
@@ -547,7 +547,7 @@
             return 0;
         }
 
-        // 更新奖励展示
+        // 更新奖励展示 - 修改为自上而下解锁顺序
         function updateRewardDisplay(totalStars) {
             const rewardsContainer = document.getElementById('rewardsContainer');
             rewardsContainer.innerHTML = '';
@@ -579,17 +579,28 @@
             document.getElementById('rewardProgressBar').style.width = `${progressPercent}%`;
             document.getElementById('starsUntilNext').textContent = starsUntilNext;
             
-            // 显示最近的5个已解锁奖励和接下来的3个待解锁奖励
+            // 显示最早的5个已解锁奖励和接下来的5个待解锁奖励（自上而下顺序）
             const displayRewards = [];
             
-            // 添加最近的5个已解锁奖励（倒序）
-            const recentUnlocked = unlockedRewards.slice(-5).reverse();
-            displayRewards.push(...recentUnlocked);
+            // 添加最早的5个已解锁奖励（按原始顺序）
+            const earlyUnlocked = unlockedRewards.slice(0, 5);
+            displayRewards.push(...earlyUnlocked);
             
-            // 如果还有未解锁的奖励，添加接下来的3个
+            // 如果解锁的奖励超过5个，添加最新的2个已解锁奖励作为衔接
+            if (unlockedRewards.length > 5) {
+                const recentUnlocked = unlockedRewards.slice(-2);
+                // 如果有重复则去重
+                recentUnlocked.forEach(reward => {
+                    if (!displayRewards.some(r => r.stars === reward.stars)) {
+                        displayRewards.push(reward);
+                    }
+                });
+            }
+            
+            // 如果还有未解锁的奖励，添加接下来的5个
             if (nextReward) {
                 const nextRewardsIndex = starRewards.indexOf(nextReward);
-                const upcomingRewards = starRewards.slice(nextRewardsIndex, nextRewardsIndex + 3);
+                const upcomingRewards = starRewards.slice(nextRewardsIndex, nextRewardsIndex + 5);
                 displayRewards.push(...upcomingRewards);
             }
             
@@ -611,6 +622,14 @@
                 
                 rewardsContainer.appendChild(rewardItem);
             });
+
+            // 如果有下一个奖励，自动滚动到下一个奖励位置
+            if (nextReward) {
+                const nextRewardElement = rewardsContainer.querySelector('.reward-highlight');
+                if (nextRewardElement) {
+                    nextRewardElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
         }
 
         // 计算所有评分并更新结果

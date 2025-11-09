@@ -51,6 +51,18 @@
             .placeholder-hint::placeholder {
                 opacity: 0.7;
             }
+            .reward-item {
+                @apply flex items-center justify-between p-3 rounded-lg transition-all;
+            }
+            .reward-unlocked {
+                @apply bg-secondary/10 border border-secondary/30;
+            }
+            .reward-locked {
+                @apply bg-gray-100 border border-gray-200 text-gray-400;
+            }
+            .reward-highlight {
+                @apply bg-accent/10 border border-accent/30 scale-[1.02] font-medium;
+            }
         }
     </style>
 </head>
@@ -73,6 +85,30 @@
                 </div>
             </div>
         </div>
+
+        <!-- 属性奖励展示区 -->
+        <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg mb-8">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-trophy text-accent"></i>
+                </div>
+                <h2 class="text-xl font-bold">已解锁的属性奖励</h2>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
+                    <span>当前进度</span>
+                    <span id="nextRewardProgress">距离下一个奖励: <span id="starsUntilNext">1175</span> 个</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="rewardProgressBar" class="bg-accent h-2.5 rounded-full" style="width: 5%"></div>
+                </div>
+            </div>
+            
+            <div id="rewardsContainer" class="space-y-2 max-h-96 overflow-y-auto pr-2">
+                <!-- 奖励列表将通过JS动态生成 -->
+            </div>
+        </section>
 
         <!-- 上赛季数据输入区 -->
         <section class="bg-white rounded-xl p-6 card-shadow section-transition hover:shadow-lg mb-8">
@@ -351,7 +387,7 @@
                 </div>
             </section>
 
-            <!-- 操作按钮 - 仅保留重置按钮 -->
+            <!-- 操作按钮 -->
             <div class="flex justify-center mt-6">
                 <button type="reset" id="resetBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-8 rounded-lg transition-all">
                     <i class="fa fa-refresh mr-2"></i>重置
@@ -361,6 +397,98 @@
     </main>
 
     <script>
+        // 原初之星对应的属性奖励数据
+        const starRewards = [
+	    { stars: 505, effect: "攻击+1%" },
+            { stars: 530, effect: "副本掉落装备升华概率+3%" },
+            { stars: 555, effect: "防御+1%" },
+            { stars: 580, effect: "宝石获取+5%" },
+            { stars: 630, effect: "生命+1%" },
+            { stars: 605, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 655, effect: "速度+1%" },
+            { stars: 680, effect: "经验获取加成+2%" },
+  	    { stars: 710, effect: "攻击+1%" },
+            { stars: 740, effect: "副本掉落装备升华概率+3%" },
+            { stars: 770, effect: "防御+1%" },
+            { stars: 800, effect: "宝石获取+5%" },
+            { stars: 830, effect: "生命+1%" },
+            { stars: 860, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 890, effect: "速度+1%" },
+            { stars: 920, effect: "经验获取加成+2%" },
+	    { stars: 955, effect: "攻击+1%" },
+            { stars: 990, effect: "副本掉落装备升华概率+3%" },
+            { stars: 1025, effect: "防御+1%" },
+            { stars: 1060, effect: "宝石获取+5%" },
+            { stars: 1095, effect: "生命+1%" },
+            { stars: 1130, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 1165, effect: "速度+1%" },
+            { stars: 1200, effect: "经验获取加成+2%" },
+            { stars: 1240, effect: "攻击+1%" },
+            { stars: 1280, effect: "副本掉落装备升华概率+3%" },
+            { stars: 1320, effect: "防御+1%" },
+            { stars: 1360, effect: "宝石获取+5%" },
+            { stars: 1400, effect: "生命+1%" },
+            { stars: 1440, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 1480, effect: "速度+1%" },
+            { stars: 1520, effect: "经验获取加成+2%" },
+            { stars: 1565, effect: "攻击+1%" },
+            { stars: 1610, effect: "副本掉落装备升华概率+3%" },
+            { stars: 1655, effect: "防御+1%" },
+            { stars: 1700, effect: "宝石获取+5%" },
+            { stars: 1745, effect: "生命+1%" },
+            { stars: 1790, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 1835, effect: "速度+1%" },
+            { stars: 1880, effect: "经验获取加成+2%" },
+            { stars: 1940, effect: "攻击+1%" },
+            { stars: 2000, effect: "副本掉落装备升华概率+3%" },
+            { stars: 2060, effect: "防御+1%" },
+            { stars: 2120, effect: "宝石获取+5%" },
+            { stars: 2180, effect: "生命+1%" },
+            { stars: 2240, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 2300, effect: "速度+1%" },
+            { stars: 2360, effect: "经验获取加成+2%" },
+            { stars: 2425, effect: "攻击+1%" },
+            { stars: 2490, effect: "副本掉落装备升华概率+3%" },
+            { stars: 2555, effect: "防御+1%" },
+            { stars: 2620, effect: "宝石获取+5%" },
+            { stars: 2685, effect: "生命+1%" },
+            { stars: 2750, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 2815, effect: "速度+1%" },
+            { stars: 2880, effect: "经验获取加成+2%" },
+            { stars: 2950, effect: "攻击+1%" },
+            { stars: 3020, effect: "副本掉落装备升华概率+3%" },
+            { stars: 3090, effect: "防御+1%" },
+            { stars: 3160, effect: "宝石获取+5%" },
+            { stars: 3230, effect: "生命+1%" },
+            { stars: 3300, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 3370, effect: "速度+1%" },
+            { stars: 3440, effect: "经验获取加成+2%" },
+            { stars: 3515, effect: "攻击+1%" },
+            { stars: 3590, effect: "副本掉落装备升华概率+3%" },
+            { stars: 3665, effect: "防御+1%" },
+            { stars: 3740, effect: "宝石获取+5%" },
+            { stars: 3815, effect: "生命+1%" },
+            { stars: 3890, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 3965, effect: "速度+1%" },
+            { stars: 4040, effect: "经验获取加成+2%" },
+            { stars: 4120, effect: "攻击+1%" },
+            { stars: 4200, effect: "副本掉落装备升华概率+3%" },
+            { stars: 4280, effect: "防御+1%" },
+            { stars: 4360, effect: "宝石获取+5%" },
+            { stars: 4440, effect: "生命+1%" },
+            { stars: 4520, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 4600, effect: "速度+1%" },
+            { stars: 4680, effect: "经验获取加成+2%" },
+            { stars: 4765, effect: "攻击+1%" },
+            { stars: 4850, effect: "副本掉落装备升华概率+3%" },
+            { stars: 4935, effect: "防御+1%" },
+            { stars: 5020, effect: "宝石获取+5%" },
+            { stars: 5105, effect: "生命+1%" },
+            { stars: 5190, effect: "副本评价奖励翻倍概率+2%" },
+            { stars: 5275, effect: "速度+1%" },
+            { stars: 5360, effect: "经验获取加成+2%" }
+        ];
+
         // 页面加载时初始化所有输入框
         document.addEventListener('DOMContentLoaded', function() {
             // 为所有需要隐藏初始值的输入框设置空值
@@ -371,6 +499,8 @@
             
             // 初始化计算
             calculateAllScores();
+            // 初始化奖励列表
+            updateRewardDisplay(65); // 默认值
         });
 
         // 副宠等级验证函数
@@ -415,6 +545,72 @@
                 return (level - baseLevel) * increment;
             }
             return 0;
+        }
+
+        // 更新奖励展示
+        function updateRewardDisplay(totalStars) {
+            const rewardsContainer = document.getElementById('rewardsContainer');
+            rewardsContainer.innerHTML = '';
+            
+            // 找出已解锁的奖励和下一个奖励
+            const unlockedRewards = starRewards.filter(reward => reward.stars <= totalStars);
+            const nextReward = starRewards.find(reward => reward.stars > totalStars);
+            
+            // 计算进度
+            const firstRewardStars = starRewards.length > 0 ? starRewards[0].stars : 0;
+            const lastRewardStars = starRewards.length > 0 ? starRewards[starRewards.length - 1].stars : 0;
+            
+            let progressPercent = 0;
+            let starsUntilNext = 0;
+            
+            if (nextReward) {
+                starsUntilNext = nextReward.stars - totalStars;
+                // 计算进度百分比
+                if (lastRewardStars > firstRewardStars) {
+                    progressPercent = Math.min(100, Math.max(0, (totalStars - firstRewardStars) / (lastRewardStars - firstRewardStars) * 100));
+                }
+            } else if (unlockedRewards.length > 0) {
+                // 所有奖励都已解锁
+                progressPercent = 100;
+                starsUntilNext = 0;
+            }
+            
+            // 更新进度条和文字
+            document.getElementById('rewardProgressBar').style.width = `${progressPercent}%`;
+            document.getElementById('starsUntilNext').textContent = starsUntilNext;
+            
+            // 显示最近的5个已解锁奖励和接下来的3个待解锁奖励
+            const displayRewards = [];
+            
+            // 添加最近的5个已解锁奖励（倒序）
+            const recentUnlocked = unlockedRewards.slice(-5).reverse();
+            displayRewards.push(...recentUnlocked);
+            
+            // 如果还有未解锁的奖励，添加接下来的3个
+            if (nextReward) {
+                const nextRewardsIndex = starRewards.indexOf(nextReward);
+                const upcomingRewards = starRewards.slice(nextRewardsIndex, nextRewardsIndex + 3);
+                displayRewards.push(...upcomingRewards);
+            }
+            
+            // 创建奖励项元素
+            displayRewards.forEach(reward => {
+                const isUnlocked = reward.stars <= totalStars;
+                const isNext = nextReward && reward.stars === nextReward.stars;
+                
+                const rewardItem = document.createElement('div');
+                rewardItem.className = `reward-item ${isUnlocked ? 'reward-unlocked' : 'reward-locked'} ${isNext ? 'reward-highlight' : ''}`;
+                
+                rewardItem.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fa ${isUnlocked ? 'fa-check-circle text-secondary' : 'fa-lock text-gray-400'} mr-2"></i>
+                        <span>${reward.effect}</span>
+                    </div>
+                    <span class="text-sm font-medium">${reward.stars} 星</span>
+                `;
+                
+                rewardsContainer.appendChild(rewardItem);
+            });
         }
 
         // 计算所有评分并更新结果
@@ -473,6 +669,9 @@
             // 更新显示
             document.getElementById('currentSeasonStars').textContent = currentSeasonStars;
             document.getElementById('totalStarsValue').textContent = totalStars;
+            
+            // 更新奖励展示
+            updateRewardDisplay(totalStars);
             
             // 添加结果更新动画
             const resultElement = document.getElementById('totalStarsValue');
